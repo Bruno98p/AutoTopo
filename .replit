@@ -1,9 +1,8 @@
-entrypoint = "run.py"
+entrypoint = "main.py"
 modules = ["python-3.11"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["cairo", "ffmpeg-full", "freetype", "ghostscript", "gobject-introspection", "gtk3", "libxcrypt", "pkg-config", "qhull", "tcl", "tk"]
 
 [unitTest]
 language = "python3"
@@ -12,10 +11,5 @@ language = "python3"
 requiredFiles = [".replit", "replit.nix"]
 
 [deployment]
-run = ["python3","run.py"]
-
+run = ["python3", "main.py"]
 deploymentTarget = "cloudrun"
-
-[[ports]]
-localPort = 8000
-externalPort = 80
