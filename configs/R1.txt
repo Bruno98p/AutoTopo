@@ -1,0 +1,15 @@
+=== show ip int brief ===
+Interface              IP-Address      OK? Method Status                Protocol
+GigabitEthernet0/0     192.168.1.1     YES manual up                    up
+GigabitEthernet0/1     unassigned      YES unset  administratively down down
+Loopback0              10.1.1.1        YES manual up                    up
+
+=== show interfaces description ===
+Interface              Status         Protocol Description
+Gi0/0                  up             up       Link to SW1 Gi0/1
+Gi0/1                  admin down     down     
+Lo0                    up             up       
+
+=== show cdp neighbors ===
+Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
+SW1              Gig 0/0           153           S I      WS-C2960  Gig 0/1

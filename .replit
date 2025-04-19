@@ -1,8 +1,14 @@
-entrypoint = "main.py"
-modules = ["python-3.11"]
+# Arquivo .replit
 
-[nix]
-channel = "stable-24_05"
+entrypoint = "app.py"
+
+[deployment]
+run = "uvicorn app:app --host=0.0.0.0 --port=8000 --reload"
+deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 8000
+externalPort = 80
 
 [unitTest]
 language = "python3"
@@ -10,6 +16,20 @@ language = "python3"
 [gitHubImport]
 requiredFiles = [".replit", "replit.nix"]
 
-[deployment]
-run = ["python3", "main.py"]
-deploymentTarget = "cloudrun"
+[nix]
+channel = "stable-24_05"
+packages = [
+  "cairo",
+  "ffmpeg-full",
+  "freetype",
+  "ghostscript",
+  "gobject-introspection",
+  "gtk3",
+  "libxcrypt",
+  "pkg-config",
+  "qhull",
+  "tcl",
+  "tk"
+]
+
+modules = ["python-3.11"]
