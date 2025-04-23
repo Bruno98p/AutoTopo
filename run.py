@@ -1,31 +1,37 @@
+import os
 import json
+import sys
+import subprocess
 from autotopo.main import gerar_topologia
 from autotopo.grafo import montar_topologia
 
-if __name__ == "__main__":
-    pasta = "configs"
+def executar_pipeline(pasta="configs"):
     print(f"📥 Lendo arquivos da pasta '{pasta}'...")
 
-    # Gera os dispositivos
+    # Gera a estrutura da topologia a partir dos arquivos
     topologia = gerar_topologia(pasta)
     print("✅ Topologia de dispositivos processada.")
 
-    # Gera as conexões
+    # Monta as conexões entre dispositivos
     conexoes = montar_topologia(topologia["dispositivos"])
     print("✅ Conexões entre dispositivos processadas.")
 
-    # Adiciona as conexões dentro da topologia
-    topologia["conexoes"] = conexoes["conexoes"]
+    # Adiciona conexões à topologia
+    topologia["conexoes"] = conexoes.get("conexoes", [])
 
-    # Salva tudo num único arquivo
-    with open("topologia_completa.json", "w", encoding="utf-8") as f:
+    # Caminho para salvar o JSON de saída
+    os.makedirs("Produtos", exist_ok=True)
+    json_path = os.path.join("Produtos", "topologia_completa.json")
+
+    with open(json_path, "w", encoding="utf-8") as f:
         json.dump(topologia, f, indent=4)
 
-    print("✅ Topologia completa salva em 'topologia_completa.json'")
+    print(f"✅ Topologia completa salva em '{json_path}'")
 
+    # Gera o grafo visual
+    subprocess.run([sys.executable, "autotopo/grafo_visual.py"], check=True)
+    print("✅ Imagem gerada com sucesso!")
 
-
-import subprocess
-
-# Executa o script diretamente
-subprocess.run(["python3", "autotopo/grafo_visual.py"])
+# Só executa se rodar diretamente este arquivo
+if __name__ == "__main__":
+    executar_pipeline()

@@ -1,7 +1,7 @@
 import os
 from .parser import parse_ip_int_brief, parse_int_description, parse_cdp_neighbors
-
 from .grafo import montar_dispositivo
+
 
 def ler_blocos_comando(conteudo):
     blocos = {}
@@ -35,3 +35,4 @@ def gerar_topologia(pasta_config):
                 topologia["dispositivos"][hostname] = dispositivo
 
     return topologia
+

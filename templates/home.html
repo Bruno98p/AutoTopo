@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>AutoTopo</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin-right: 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .tab {
+            display: none;
+        }
+
+        .tab.active {
+            display: block;
+        }
+
+        .btn-teste {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .btn-teste:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">AutoTopo</div>
+        <ul>
+            <li><a href="#" onclick="showTab('inicio')">Início</a></li>
+            <li><a href="/gerar">Gerar Topologia</a></li>
+            <li><a href="#" onclick="showTab('ver')">Ver Topologia</a></li>
+        </ul>
+        <button id="modoBtn" onclick="toggleMode()">🌙</button>
+    </nav>
+
+    <main>
+        <section id="inicio" class="tab active">
+            <h2>Bem-vindo ao AutoTopo!</h2>
+            <p>Seu gerador de topologia de rede automatizado 🚀</p>
+            <a href="/upload">📂 Enviar arquivos e gerar topologia</a>
+        </section>
+
+        <section id="ver" class="tab">
+            <h2>Topologia Gerada</h2>
+            {% if topologia_img %}
+                <img id="imgTopo" src="{{ topologia_img }}" alt="Topologia">
+            {% else %}
+                <p>Ainda não foi gerada nenhuma topologia.</p>
+            {% endif %}
+        </section>
+    </main>
+
+    {% if status %}
+    <script>
+        Swal.fire({
+            toast: true,
+            position: 'bottom-end',
+            icon: '{{ "success" if tipo == "sucesso" else "error" }}',
+            title: '{{ status }}',
+            showConfirmButton: false,
+            timer: 4000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+    </script>
+    {% endif %}
+
+    <section style="margin: 2rem;">
+        <h3>🔧 Área de Teste</h3>
+        <button class="btn-teste" onclick="limparArquivos()">🧹 Limpar arquivos</button>
+        <button class="btn-teste" onclick="carregarArquivosTeste()">📥 Carregar arquivos de teste</button>
+    </section>
+
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function toggleMode() {
+            document.body.classList.toggle("dark");
+            const btn = document.getElementById("modoBtn");
+            btn.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+        }
+
+        window.onload = () => {
+            const hash = window.location.hash;
+            if (hash === "#ver") {
+                showTab("ver");
+            }
+        };
+
+        function limparArquivos() {
+            fetch('/limpar_arquivos', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                Swal.fire({
+                    toast: true,
+                    position: 'bottom-end',
+                    icon: data.sucesso ? 'success' : 'error',
+                    title: data.mensagem,
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            });
+        }
+
+        function carregarArquivosTeste() {
+            fetch('/carregar_testes', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                Swal.fire({
+                    toast: true,
+                    position: 'bottom-end',
+                    icon: data.sucesso ? 'success' : 'error',
+                    title: data.mensagem,
+                    showConfirmButton: false,
+                    timer: 2500
+                }).then(() => {
+                    if (data.sucesso) {
+                        window.location.href = "/gerar";
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

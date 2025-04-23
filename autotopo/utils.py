@@ -12,7 +12,8 @@ def expand_interface_name(interface):
         "Po": "Port-channel"
     }
 
-    match = re.match(r"([A-Za-z]+)\s*(\d+\/\d+)", interface)
+    # Suporte a interfaces com 2 ou 3 níveis (ex: Gi0/1 ou Gi1/0/1)
+    match = re.match(r"([A-Za-z]+)\s*(\d+(?:/\d+){1,2})", interface)
     if match:
         prefix, numbers = match.groups()
         full_prefix = mapping.get(prefix, prefix)
